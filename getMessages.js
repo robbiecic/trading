@@ -1,11 +1,14 @@
 var AWS = require("aws-sdk");
 var config = require("./config/config.json");
 
+const ordersQueue =
+  "https://sqs.ap-southeast-2.amazonaws.com/023075176548/orders";
+
 // Set the region
 AWS.config.update({
   region: config["aws"].region,
-  accessKeyId: config["aws"].accessKeyId,
-  secretAccessKey: config["aws"].secretAccessKey
+  accessKeyId: process.env.ROBERT_AWS_ACCESS_KEY_ID,
+  secretAccessKey: cprocess.env.ROBERT_AWS_SECRET_ACCESS_KEY
 });
 
 //getMessages
@@ -15,7 +18,7 @@ function getMessages() {
 
     //In bound queue
     var params = {
-      QueueUrl: "https://sqs.us-east-2.amazonaws.com/123188106252/orders",
+      QueueUrl: ordersQueue,
       MaxNumberOfMessages: "10"
     };
 
@@ -40,7 +43,7 @@ function deleteMessages(messageId, receiptHandle) {
         ReceiptHandle: receiptHandle
       }
     ],
-    QueueUrl: "https://sqs.us-east-2.amazonaws.com/123188106252/orders"
+    QueueUrl: ordersQueue
   };
   sqs.deleteMessageBatch(params, function(err, data) {
     if (err) console.log("SQS Message delete failed", err, err.stack);

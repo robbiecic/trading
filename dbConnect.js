@@ -4,8 +4,8 @@ var config = require("./config/config.json");
 function dbConnect(environment) {
   return new Promise((resolve, reject) => {
     let host = config[environment].dbName;
-    let user = config[environment].userName;
-    let password = config[environment].password;
+    let user = process.env.DB_USER;
+    let password = process.env.DB_PASSWORD;
     let schema = config[environment].schema;
     let port = config[environment].port;
 
