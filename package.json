@@ -1,0 +1,21 @@
+{
+  "name": "trading",
+  "version": "1.0.0",
+  "description": "Takes orders from a queue and executes them against IG API",
+  "main": "index.js",
+  "dependencies": {
+    "aws-sdk": "^2.522.0",
+    "mysql": "^2.17.1",
+    "node-ig-api": "^2.0.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git-codecommit.us-east-2.amazonaws.com/v1/repos/trading"
+  },
+  "author": "",
+  "license": "ISC"
+}
