@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Execute trades against IG Exchange
+Resources:
+  trading:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs10.x
+      MemorySize: 256
+      CodeUri: ./
+      Environment:
+        Variables:
+          IG_TOKENS_EXP: ""
+          IG_XST: ""
+          IG_CST: ""
+          IG_LIGHTSTREAMER_END_POINT: ""
+          X_REQUEST_ID: ""
+          CURRENT_ACCOUNT_ID: ""
+      Events:
+        RunEveryMinute:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 minute)
+  # SNSSubscriptionTrading:
+  #   Type: AWS::SNS::Subscription
+  #   Properties:
+  #     TopicArn: arn:aws:sns:us-east-2:123188106252:newTradeOrder
+  #     Endpoint: arn:aws:lambda:us-east-2:123188106252:function:tradingStack-trading-107IYZU80C82B
+  #     Protocol: lambda
