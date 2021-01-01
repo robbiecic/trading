@@ -4,8 +4,9 @@
   "description": "Takes orders from a queue and executes them against IG API",
   "main": "index.js",
   "dependencies": {
-    "aws-sdk": "^2.522.0",
-    "mysql": "^2.17.1"
+    "aws-sdk": "^2.820.0",
+    "mysql": "^2.18.1",
+    "requirejs": "^2.3.6"
   },
   "devDependencies": {},
   "scripts": {
