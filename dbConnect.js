@@ -1,21 +1,14 @@
 var mysql = require("mysql");
-var config = require("./config/config.json");
 
 function dbConnect(environment) {
   return new Promise((resolve, reject) => {
-    let host = config[environment].dbName;
-    let user = process.env.DB_USER;
-    let password = process.env.DB_PASSWORD;
-    let schema = config[environment].schema;
-    let port = config[environment].port;
-
     //Create connection to mySQL
     var con = mysql.createConnection({
-      host: host,
-      user: user,
-      password: password,
-      database: schema,
-      port: port
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_SCHEMA,
+      port: process.env.DB_PORT
     });
     //Connect to DB
     con.connect(function(err) {

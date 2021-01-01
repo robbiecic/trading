@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "aws-sdk": "^2.820.0",
+    "dotenv": "^8.2.0",
     "mysql": "^2.18.1",
     "requirejs": "^2.3.6"
   },

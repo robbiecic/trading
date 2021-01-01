@@ -5,7 +5,7 @@ phases:
       nodejs: 10
   build:
     commands:
-      - npm install mysql aws-sdk requirejs
+      - npm install mysql aws-sdk requirejs dotenv
       - export BUCKET=trading-ig-builds
       - aws cloudformation package --template-file template.yaml --s3-bucket $BUCKET --output-template-file outputtemplate.yaml
 artifacts:

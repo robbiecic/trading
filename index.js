@@ -2,6 +2,14 @@ var { getMessages, deleteMessages } = require("./getMessages.js");
 var { havePositions } = require("./havePositions.js");
 var { placeOrder } = require("./placeOrder.js");
 var { dbConnect } = require("./dbConnect.js");
+require("dotenv").config();
+
+if (
+  process.env.ENVIRONMENT !== "PRODUCTION" ||
+  process.env.ENVIRONMENT !== "STAGING"
+) {
+  require("dotenv").config();
+}
 
 exports.handler = event => {
   //Connect to DB before doing anything
@@ -62,14 +70,14 @@ exports.handler = event => {
             }
             //Open new stock orders if we have capital
             else if (instruction === "Open") {
-              // placeOrder(con, pair, "Open", direction, priceTarget)
-              //   .then(() => {
-              //     deleteMessages(messageId, receiptHandle);
-              //   })
-              //   .catch(() => {
-              //     console.log("ERROR PLACING ORDER TO CLOSE");
-              //     deleteMessages(messageId, receiptHandle);
-              //   });
+              placeOrder(con, pair, "Open", direction, priceTarget)
+                .then(() => {
+                  deleteMessages(messageId, receiptHandle);
+                })
+                .catch(() => {
+                  console.log("ERROR PLACING ORDER TO CLOSE");
+                  deleteMessages(messageId, receiptHandle);
+                });
             }
           } //End for Loop
         })
