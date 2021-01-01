@@ -1,4 +1,4 @@
-var IG = require("node-ig-api");
+var IG = require("./node-ig-api");
 
 //havePositions
 function havePositions() {

@@ -1,4 +1,4 @@
-var IG = require("node-ig-api");
+var IG = require("./node-ig-api");
 var { insertLogTable, insertTradingHistoryTable } = require("./dbConnect.js");
 
 //placeOrder
