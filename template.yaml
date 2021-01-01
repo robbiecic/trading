@@ -25,6 +25,6 @@ Resources:
   SNSSubscriptionTrading:
     Type: AWS::SNS::Subscription
     Properties:
-      TopicArn: arn:aws:sns:us-east-2:123188106252:newTradeOrder
+      TopicArn: arn:aws:sns:ap-southeast-2:023075176548:newTradeOrder
       Endpoint: arn:aws:lambda:ap-southeast-2:023075176548:function:trading-ig-stack-trading-YZ9DKK2RA5HQ
       Protocol: lambda
