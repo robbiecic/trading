@@ -8,7 +8,7 @@ const ordersQueue =
 AWS.config.update({
   region: config["aws"].region,
   accessKeyId: process.env.ROBERT_AWS_ACCESS_KEY_ID,
-  secretAccessKey: cprocess.env.ROBERT_AWS_SECRET_ACCESS_KEY
+  secretAccessKey: process.env.ROBERT_AWS_SECRET_ACCESS_KEY
 });
 
 //getMessages
