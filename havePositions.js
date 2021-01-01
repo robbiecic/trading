@@ -1,7 +1,7 @@
 var IG = require("./node-ig-api");
 
 //havePositions
-function havePositions() {
+async function havePositions() {
   return new Promise((resolve, reject) => {
     //IG get open positions
     IG.login(false)

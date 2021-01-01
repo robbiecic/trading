@@ -1,3 +1,7 @@
+nodeJS:
+
+- node -e 'require("./index.js").handler()'
+
 IG Environment Variables
 
 - IG_IDENTIFIER

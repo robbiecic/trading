@@ -2,7 +2,7 @@ var IG = require("./node-ig-api");
 var { insertLogTable, insertTradingHistoryTable } = require("./dbConnect.js");
 
 //placeOrder
-function placeOrder(con, pair, action, position, priceTarget) {
+async function placeOrder(con, pair, action, position, priceTarget) {
   return new Promise((resolve, reject) => {
     //IG get place order
     IG.login(false)
@@ -155,7 +155,7 @@ function placeOrder(con, pair, action, position, priceTarget) {
         }
       })
       .catch(e => {
-        let returnValue = "ERROR CONNECTING TO IG - " + e;
+        let returnValue = "ERROR CONNECTING TO IG - " + JSON.stringify(e);
         reject(returnValue);
       });
   });
