@@ -12,10 +12,9 @@ var { dbConnect } = require("./dbConnect.js");
 
 exports.handler = async () => {
   try {
-    con = await dbConnect();
     queue = await getMessages();
     queue_length = queue.length;
-
+    con = await dbConnect();
     //For each queue item
     for (let i = 0; i < queue_length; i++) {
       //Define queue variables
