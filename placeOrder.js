@@ -164,12 +164,14 @@ async function placeOrder(con, pair, action, position, priceTarget) {
       try {
         if (action === "Close") {
           await closePosition(position, con);
+          console.log("Successfully placed a CLOSE order for ", pair);
           resolve();
         } else if (action === "Open") {
           await openOrder(position, con, priceTarget, pair);
+          console.log("Successfully placed an OPEN order for ", pair);
           resolve();
         } else {
-          reject("Not Open nor Close");
+          reject("The trade actions was neither an Open nor a Close");
         }
       } catch (error) {
         reject(error);
