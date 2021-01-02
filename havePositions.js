@@ -18,13 +18,11 @@ async function havePositions() {
             }
           })
           .catch(error => {
-            let returnValue = "ERROR RETURNING POSITIONS - " + error;
-            reject(returnValue);
+            reject("ERROR RETURNING POSITIONS - " + error);
           });
       })
       .catch(e => {
-        let returnValue = "ERROR CONNECTING TO IG - " + e;
-        reject(returnValue);
+        reject("ERROR CONNECTING TO IG - " + e);
       });
   });
 }

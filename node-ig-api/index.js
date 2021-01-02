@@ -499,7 +499,7 @@ function showOpenPositions() {
 }
 
 // Creates an OTC position.
-function deal(ticket) {
+async function deal(ticket) {
   return new Promise((res, rej) => {
     // Constraints:
     if (["AUD", "EUR", "GBP", "USD"].indexOf(ticket.currencyCode) === -1)
