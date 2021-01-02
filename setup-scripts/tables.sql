@@ -16,9 +16,9 @@ CREATE TABLE IF NOT EXISTS tradingHistory
     dealID varchar(100) null,
     dealReference varchar(100) null,
     epic varchar(100) null,
-    level double not null,
-    size double not null,
+    level double null,
+    size double null,
     direction varchar(100) null,
-    profit double not null,
-    targetPrice double not null
+    profit double null,
+    targetPrice double null
 );

@@ -614,7 +614,7 @@ function editPosition(dial_id, ticket) {
 }
 
 // Closes an open position
-function closePosition(dealId) {
+async function closePosition(dealId) {
   return new Promise((res, rej) => {
     let temp1 = [];
     let response = {};

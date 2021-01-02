@@ -1,0 +1,9 @@
+{
+  "id": 1,
+  "orderDate": "2021-01-02 09:32:37",
+  "orderDateUTC": "2021-01-02 09:32:37",
+  "pair": "AUD/USD",
+  "priceTarget": 1,
+  "direction": "Short",
+  "actionType": "Open"
+}
