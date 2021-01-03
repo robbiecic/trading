@@ -5,32 +5,24 @@ if (
   require("dotenv").config();
 }
 
-var { getMessages, deleteMessages } = require("./getMessages.js");
 var { havePositions } = require("./havePositions.js");
 var { placeOrder } = require("./placeOrder.js");
 var { dbConnect } = require("./dbConnect.js");
 
 exports.handler = async event => {
   try {
-    // queue = await getMessages();
-    queue = event["Records"];
-    console.log(queue);
+    queue = event["Records"]; //Read in event which will contain SQS details
     queue_length = queue.length;
     con = await dbConnect();
     //For each queue item
     for (let i = 0; i < queue_length; i++) {
       //Define queue variables
-      let messageId = queue[i].MessageId;
-      let receiptHandle = queue[i].ReceiptHandle;
       let body = JSON.parse(queue[i].body);
       let instruction = body.actionType;
       let direction = body.direction;
       let pair = body.pair;
       let originalOrderDate = body.orderDateUTC;
       let priceTarget = body.priceTarget;
-      // Remove message from queue once we've read in the data
-      // Regardless if the order is placed or not, we only want to try once
-      deleteMessages(messageId, receiptHandle);
       try {
         if (instruction === "Close") {
           //Need to loop through each position then place order accordingly
