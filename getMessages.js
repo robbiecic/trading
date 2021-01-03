@@ -22,6 +22,8 @@ async function getMessages() {
     };
 
     sqs.receiveMessage(params, function(err, data) {
+      console.log(data);
+      console.log("typeof data.Messages", typeof data.Messages);
       if (err) {
         throw err;
       } else if (typeof data.Messages != "object") {
