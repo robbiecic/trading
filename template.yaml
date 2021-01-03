@@ -18,13 +18,8 @@ Resources:
           X_REQUEST_ID: ""
           CURRENT_ACCOUNT_ID: ""
       Events:
-        RunEveryMinute:
-          Type: Schedule
+        RunWhenMessageInQueue:
+          Type: SQS
           Properties:
-            Schedule: rate(1 minute)
-  SNSSubscriptionTrading:
-    Type: AWS::SNS::Subscription
-    Properties:
-      TopicArn: arn:aws:sns:ap-southeast-2:023075176548:newTradeOrder
-      Endpoint: arn:aws:lambda:ap-southeast-2:023075176548:function:trading-ig-stack-trading-YZ9DKK2RA5HQ
-      Protocol: lambda
+            Queue: arn:aws:sqs:ap-southeast-2:023075176548:orders
+            BatchSize: 10
