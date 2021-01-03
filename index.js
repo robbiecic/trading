@@ -10,9 +10,11 @@ var { havePositions } = require("./havePositions.js");
 var { placeOrder } = require("./placeOrder.js");
 var { dbConnect } = require("./dbConnect.js");
 
-exports.handler = async () => {
+exports.handler = async event => {
   try {
-    queue = await getMessages();
+    // queue = await getMessages();
+    queue = event["Records"];
+    console.log(queue);
     queue_length = queue.length;
     con = await dbConnect();
     //For each queue item
