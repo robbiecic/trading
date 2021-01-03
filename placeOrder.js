@@ -87,6 +87,7 @@ async function openOrder(position, pair) {
         //trailingStop: null,
         //trailingStopIncrement: null
       };
+      console.log("Order ticket - ", ticket);
       response = await IG.deal(ticket);
       console.log("Successfully placed an OPEN order for ", pair);
       resolve(response);
