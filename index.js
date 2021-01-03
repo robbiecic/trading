@@ -22,7 +22,7 @@ exports.handler = async event => {
       //Define queue variables
       let messageId = queue[i].MessageId;
       let receiptHandle = queue[i].ReceiptHandle;
-      let body = JSON.parse(queue[i].Body);
+      let body = JSON.parse(queue[i].body);
       let instruction = body.actionType;
       let direction = body.direction;
       let pair = body.pair;
