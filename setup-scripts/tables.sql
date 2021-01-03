@@ -5,7 +5,9 @@ CREATE TABLE IF NOT EXISTS auditLogs
     eventDate datetime not null,
     eventStatus varchar(100) null,
     eventAction varchar(100) null,
-    eventDescription varchar(100) null
+    eventDescription varchar(100) null,
+    originalOrderDateUTC datetime null,
+    pair varchar(10)
 );
 
 
@@ -20,5 +22,7 @@ CREATE TABLE IF NOT EXISTS tradingHistory
     size double null,
     direction varchar(100) null,
     profit double null,
-    targetPrice double null
+    targetPrice double null,
+    originalOrderDateUTC datetime null,
+    pair varchar(10)
 );

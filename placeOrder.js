@@ -1,8 +1,52 @@
 var IG = require("./node-ig-api");
 var { insertLogTable, insertTradingHistoryTable } = require("./dbConnect.js");
 
+//placeOrder
+async function placeOrder(
+  con,
+  pair,
+  action,
+  position,
+  priceTarget,
+  originalOrderDate
+) {
+  return new Promise((resolve, reject) => {
+    IG.login(false).then(async () => {
+      try {
+        if (action === "Close") {
+          closeReceipt = await closePosition(position);
+          var { tradingBody, logBody } = await getOrderDetails(
+            "CLOSE",
+            closeReceipt,
+            priceTarget,
+            originalOrderDate,
+            pair
+          );
+          await log_into_trading_history(con, tradingBody, logBody);
+          resolve();
+        } else if (action === "Open") {
+          openReceipt = await openOrder(position, pair);
+          var { tradingBody, logBody } = await getOrderDetails(
+            "OPEN",
+            openReceipt,
+            priceTarget,
+            originalOrderDate,
+            pair
+          );
+          await log_into_trading_history(con, tradingBody, logBody);
+          resolve();
+        } else {
+          reject("The trade actions was neither an Open nor a Close");
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
+}
+
 // Close position
-async function closePosition(position, con) {
+async function closePosition(position) {
   return new Promise(async (resolve, reject) => {
     try {
       let dealID = position.position.dealId;
@@ -12,27 +56,84 @@ async function closePosition(position, con) {
       reject("Error trying to close position with error - " + error);
     }
     if (close_receipt.confirms.dealStatus === "ACCEPTED") {
+      console.log("Successfully placed a CLOSE order with deal id ", dealID);
+      resolve(close_receipt);
+    } else {
+      reject("Position could not be closed.");
+    }
+  });
+}
+
+// Open position
+async function openOrder(position, pair) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      direction = get_ig_direction(position);
+      let ticket = {
+        currencyCode: "USD",
+        direction: direction,
+        epic: get_ig_epic(pair),
+        expiry: "-",
+        size: process.env.IG_UNITS || 1,
+        forceOpen: true,
+        orderType: "MARKET",
+        level: null,
+        limitDistance: null,
+        limitLevel: null,
+        stopDistance: null,
+        stopLevel: null,
+        guaranteedStop: false,
+        timeInForce: "FILL_OR_KILL"
+        //trailingStop: null,
+        //trailingStopIncrement: null
+      };
+      response = await IG.deal(ticket);
+      console.log("Successfully placed an OPEN order for ", pair);
+      resolve(response);
+    } catch (error) {
+      reject("Error opening trade - ", error);
+    }
+  });
+}
+
+// Log the closing of an order
+async function getOrderDetails(
+  direction,
+  order,
+  priceTarget,
+  originalOrderDate,
+  pair
+) {
+  return new Promise((resolve, reject) => {
+    try {
+      let dealReference =
+        direction == "CLOSE"
+          ? order.positions.dealReference
+          : order.confirms.dealReference;
+      let profit = direction == "CLOSE" ? order.confirms.profit : 0.0;
       //Insert into tradingHistory DB first
       let tradingBody = returnTradingBody(
-        close_receipt.confirms,
-        "CLOSE",
-        close_receipt.confirms.profit,
+        order.confirms,
+        direction,
+        profit,
         priceTarget,
-        close_receipt.positions.dealReference
+        dealReference,
+        originalOrderDate,
+        pair
       );
-
       //Insert action into logs DB
       let logBody = returnLogBody(
         "SUCCESS",
-        "CLOSE POSITION",
-        close_receipt.confirms.date,
-        close_receipt.positions.dealReference,
-        close_receipt.confirms.dealId
+        direction + " POSITION",
+        order.confirms.date,
+        dealReference,
+        order.confirms.dealId,
+        originalOrderDate,
+        pair
       );
-      await log_into_trading_history(con, tradingBody, logBody);
-      resolve();
-    } else {
-      reject("Position could not be closed.");
+      resolve({ tradingBody: tradingBody, logBody: logBody });
+    } catch (e) {
+      reject(e);
     }
   });
 }
@@ -77,7 +178,9 @@ function returnTradingBody(
   eventAction,
   profit,
   priceTarget,
-  dealReference
+  dealReference,
+  originalOrderDate,
+  pair
 ) {
   return {
     eventDate: data.date,
@@ -89,7 +192,9 @@ function returnTradingBody(
     size: data.size,
     direction: data.direction,
     profit: profit, //0 when opening orders
-    targetPrice: priceTarget
+    targetPrice: priceTarget,
+    originalOrderDateUTC: originalOrderDate,
+    pair: pair
   };
 }
 
@@ -99,85 +204,19 @@ function returnLogBody(
   eventAction,
   eventDate,
   dealReference,
-  dealId
+  dealId,
+  originalOrderDate,
+  pair
 ) {
   return {
     eventStatus: eventStatus,
     eventAction: eventAction,
     eventDate: eventDate,
     eventDescription:
-      "dealReference = " + dealReference + " | dealID = " + dealId
+      "dealReference = " + dealReference + " | dealID = " + dealId,
+    originalOrderDateUTC: originalOrderDate,
+    pair: pair
   };
-}
-
-// Open position
-async function openOrder(position, con, priceTarget, pair) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      direction = get_ig_direction(position);
-      let ticket = {
-        currencyCode: "USD",
-        direction: direction,
-        epic: get_ig_epic(pair),
-        expiry: "-",
-        size: process.env.IG_UNITS,
-        forceOpen: true,
-        orderType: "MARKET",
-        level: null,
-        limitDistance: null,
-        limitLevel: null,
-        stopDistance: null,
-        stopLevel: null,
-        guaranteedStop: false,
-        timeInForce: "FILL_OR_KILL"
-        //trailingStop: null,
-        //trailingStopIncrement: null
-      };
-      response = await IG.deal(ticket);
-      let tradingBody = returnTradingBody(
-        response.confirms,
-        "OPEN",
-        0,
-        priceTarget,
-        response.confirms.dealReference
-      );
-      //Insert action into logs DB
-      let logBody = returnLogBody(
-        "SUCCESS",
-        "OPEN POSITION",
-        response.confirms.date,
-        response.confirms.dealReference,
-        response.confirms.dealId
-      );
-      await log_into_trading_history(con, tradingBody, logBody);
-      resolve();
-    } catch (error) {
-      reject("Error opening trade - ", error);
-    }
-  });
-}
-
-//placeOrder
-async function placeOrder(con, pair, action, position, priceTarget) {
-  return new Promise((resolve, reject) => {
-    IG.login(false).then(async () => {
-      try {
-        if (action === "Close") {
-          await closePosition(position, con);
-          console.log("Successfully placed a CLOSE order for ", pair);
-          resolve();
-        } else if (action === "Open") {
-          await openOrder(position, con, priceTarget, pair);
-          console.log("Successfully placed an OPEN order for ", pair);
-          resolve();
-        } else {
-          reject("The trade actions was neither an Open nor a Close");
-        }
-      } catch (error) {
-        reject(error);
-      }
-    });
-  });
 }
 
 module.exports.placeOrder = placeOrder;

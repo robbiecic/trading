@@ -25,7 +25,7 @@ async function getMessages() {
       if (err) {
         throw err;
       } else if (typeof data.Messages != "object") {
-        reject("No messages to process");
+        reject("No trades to process");
       } else {
         resolve(data.Messages);
       }

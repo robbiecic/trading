@@ -64,6 +64,10 @@ function insertLogTable(con, body) {
       body.eventAction +
       "','" +
       body.eventDescription +
+      "',' " +
+      body.originalOrderDateUTC +
+      "',' " +
+      body.pair +
       "')";
     con.query(sql, function(err, sqlData) {
       if (err) {
@@ -101,7 +105,11 @@ async function insertTradingHistoryTable(con, body) {
       body.profit +
       ", " +
       body.targetPrice +
-      ");";
+      ",' " +
+      body.originalOrderDateUTC +
+      "',' " +
+      body.pair +
+      "');";
 
     con.query(sql, function(err, sqlData) {
       if (err) {

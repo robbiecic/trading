@@ -24,6 +24,7 @@ exports.handler = async () => {
       let instruction = body.actionType;
       let direction = body.direction;
       let pair = body.pair;
+      let originalOrderDate = body.orderDateUTC;
       let priceTarget = body.priceTarget;
       // Remove message from queue once we've read in the data
       // Regardless if the order is placed or not, we only want to try once
@@ -38,11 +39,25 @@ exports.handler = async () => {
               (direction === "Short" && igPosition === "SELL") ||
               (direction === "Long" && igPosition === "BUY")
             ) {
-              await placeOrder(con, pair, "Close", positions[i], priceTarget);
+              await placeOrder(
+                con,
+                pair,
+                "Close",
+                positions[i],
+                priceTarget,
+                originalOrderDate
+              );
             }
           }
         } else if (instruction === "Open") {
-          await placeOrder(con, pair, "Open", direction, priceTarget);
+          await placeOrder(
+            con,
+            pair,
+            "Open",
+            direction,
+            priceTarget,
+            originalOrderDate
+          );
         }
       } catch (error) {
         console.log(error);
