@@ -56,9 +56,10 @@ async function closePosition(position) {
       reject("Error trying to close position with error - " + error);
     }
     if (close_receipt.confirms.dealStatus === "ACCEPTED") {
-      console.log("Successfully placed a CLOSE order with deal id ", dealID);
+      console.log("Successfully placed a CLOSE order");
       resolve(close_receipt);
     } else {
+      console.log("Close order was not accepted by IG");
       reject("Position could not be closed.");
     }
   });
@@ -83,7 +84,7 @@ async function openOrder(position, pair) {
         stopDistance: null,
         stopLevel: null,
         guaranteedStop: false,
-        timeInForce: "FILL_OR_KILL"
+        timeInForce: "FILL_OR_KILL",
         //trailingStop: null,
         //trailingStopIncrement: null
       };
@@ -165,9 +166,9 @@ async function log_into_trading_history(con, tradingBody, logBody) {
       .then(() => {
         insertLogTable(con, logBody)
           .then(() => resolve())
-          .catch(e => reject(e));
+          .catch((e) => reject(e));
       })
-      .catch(e => {
+      .catch((e) => {
         reject(e);
       });
   });
@@ -195,7 +196,7 @@ function returnTradingBody(
     profit: profit, //0 when opening orders
     targetPrice: priceTarget,
     originalOrderDateUTC: originalOrderDate,
-    pair: pair
+    pair: pair,
   };
 }
 
@@ -216,7 +217,7 @@ function returnLogBody(
     eventDescription:
       "dealReference = " + dealReference + " | dealID = " + dealId,
     originalOrderDateUTC: originalOrderDate,
-    pair: pair
+    pair: pair,
   };
 }
 
